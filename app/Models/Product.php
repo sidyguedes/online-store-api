@@ -11,7 +11,17 @@ class Product extends Model
 
 
     protected $fillable = [
-        'name', 'price', 'description', 'stock', 'brand', 'category'
+        'title', 'price', 'description', 'stock', 'brand', 'category'
 
     ];
+
+
+    public function rules($id = '') 
+    {
+        return [
+            'title' => "required|min:3|max:500|unique:products,title,{$id},id",
+            'brand' => 'required|min:2'
+        ];
+
+    }
 }

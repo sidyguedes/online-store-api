@@ -32,7 +32,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        return response()->json(['result' => $this->product->create($request->all())]);
+        $data = $request->all();
+        $validate = validator($data, $this->product->rules());
+        if ($validate->fails()) {
+           
+            $messages = $validate->messages();
+           return response()->json(['validate.error', $messages]);
+        }
+
+        if (!$insert = $this->product->create($data) ) {
+            return response()->json(['error' => 'error insert'], 500);
+        }
+        return response()->json($insert);
     }
 
     /**
@@ -43,7 +54,10 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        if (!$product = $this->product->find($id)) {
+           return response()->json(['error' => 'not_found']);
+        }
+        return response()->json($product);
     }
 
     /**
@@ -55,7 +69,24 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = request()->all();
+        $validate = validator($data, $this->product->rules($id));
+        if ($validate->fails()) {
+           
+            $messages = $validate->messages();
+            return response()->json(['validate.error', $messages]);
+        }
+
+        if (!$product = $this->product->find($id)) {
+            return response()->json(['error' => 'not_found']);
+        }
+
+        if (!$update = $product->update($data)) {
+            return response()->json(['error' => 'product_not_updated'], 500);
+        }
+
+        return response()->json($update);
+
     }
 
     /**
@@ -66,6 +97,15 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+
+        if (!$product = $this->product->find($id)) {
+            return response()->json(['error' => 'not_found']);
+        }
+
+        if (!$delete = $product->delete()) {
+            return response()->json(['error' => 'product_not_found']);
+        }
+
+        return response()->json($delete);
     }
 }
