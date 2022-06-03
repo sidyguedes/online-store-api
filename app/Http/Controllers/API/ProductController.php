@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use SebastianBergmann\CodeCoverage\Report\Xml\Totals;
 
 class ProductController extends Controller
 {
     private $product;
+    private $totalPage = 5;
     public function __construct(Product $product)
     {
         $this->product = $product;
@@ -20,8 +22,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = $this->product->all();
-        return response()->json($product);
+        $products = $this->product->paginate($this->totalPage);
+        return response()->json($products);
     }
 
     /**
@@ -107,5 +109,21 @@ class ProductController extends Controller
         }
 
         return response()->json($delete);
+    }
+
+    public function search(Request $request)
+    {
+        $data = $request->all();
+
+        $validate = validator($data, $this->product->rulesSearch());
+        if ($validate->fails()) {
+           
+            $messages = $validate->messages();
+            return response()->json(['validate.error', $messages]);
+        }
+
+        $products = $this->product->search($data, $this->totalPage);
+        return response()->json($products);
+       
     }
 }

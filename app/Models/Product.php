@@ -24,4 +24,21 @@ class Product extends Model
         ];
 
     }
+
+    public function rulesSearch($id = '') 
+    {
+        return [
+            'key-search' => 'required'
+        ];
+
+    }
+
+    public function search($data, $totalPage) 
+    {
+        return 
+            $this->where ('title', $data['key-search'])
+                ->orWhere('description', 'LIKE', "%{$data['key-search']}%")
+                ->paginate($totalPage);
+
+    }
 }
