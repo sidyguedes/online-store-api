@@ -12,7 +12,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::put('products/{id}', 'update');
     Route::get('products/{id}', 'show');
     Route::post('products', 'store');
-    Route::get('products', 'index');
+    Route::get('products', 'index')->middleware(['auth']) ;
 });
 
 
