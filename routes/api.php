@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 
 
-
+Route::get('/user', [AuthApiController::class, 'getAuthenticatedUser']);
+Route::post('/auth-refresh', [AuthApiController::class, 'refreshToken']);
 Route::post('/auth', [AuthApiController::class, 'authenticate']);
 
 Route::group(['prefix' => 'products'], function() {
