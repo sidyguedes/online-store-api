@@ -9,7 +9,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 
-
 class AuthApiController extends Controller
 {
     public function authenticate(Request $request)
@@ -37,7 +36,7 @@ class AuthApiController extends Controller
 
     public function getAuthenticatedUser()
     {
-        
+
         try {
             if (! $user = JWTAuth::parseToken()->authenticate()) {
                 return response()->json(['user_not_found'], 404);
@@ -61,19 +60,21 @@ class AuthApiController extends Controller
         return response()->json(compact('user'));
     }
 
-    public function refreshToken() 
+    public function refreshToken()
     {
+        //dd('entrou', JWTAuth::getToken());
         if (!$token = JWTAuth::getToken()) {
             return response()->json(['error' => 'token_not_sent'], 401);
         }
 
         try {
-           $token = JWTAuth::refreshToken();
+
+           $token = JWTAuth::refresh(JWTAuth::getToken());
         } catch (TokenInvalidException $e) {
             return response()->json(['status' => 'Authorization Token invalid']);
         }
-        
+
         return response()->json(compact('token'));
     }
-    
+
 }
